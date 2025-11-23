@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý kho hàng - Phạm Minh Nhật</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="title">Quản Lý Kho Hàng</div>
+    <div>
+        <a onclick="showPage('home')">Trang chủ</a>
+        <a onclick="showPage('warehouse')">Kho hàng</a>
+        <a onclick="showPage('report')">Báo cáo</a>
+    </div>
+</div>
+
+<!-- TRANG CHỦ -->
+<div id="home" class="container">
+    <h2>Dashboard Tồn Kho</h2>
+
+    <div class="card">
+        <h3>Tổng Số Sản Phẩm</h3>
+        <p><b>1280 sản phẩm</b></p>
+    </div>
+
+    <div class="card">
+        <h3>Báo Cáo Bán Hàng Tháng</h3>
+        <p>Doanh thu tháng: <b>350.000.000 VNĐ</b></p>
+    </div>
+
+    <div class="card" style="background:#ffebe9; border-left:5px solid red">
+        <h3>Cảnh báo hàng sắp hết</h3>
+        <ul>
+            <li>CPU Intel i5 – còn 2 cái</li>
+            <li>RAM DDR4 8GB – còn 5 cái</li>
+        </ul>
+    </div>
+</div>
+
+<!-- TRANG KHO HÀNG -->
+<div id="warehouse" class="container hidden">
+    <h2>Danh Sách Sản Phẩm</h2>
+
+    <input type="text" id="search" class="input" placeholder="Tìm kiếm sản phẩm...">
+    <button class="btn" onclick="searchProduct()">Tìm</button>
+
+    <table class="table" id="productTable">
+        <thead>
+        <tr>
+            <th>Mã SP</th>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Cập nhật</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>SP001</td>
+            <td>CPU Intel i5</td>
+            <td contenteditable="true">10</td>
+            <td><button class="btn">Lưu</button></td>
+        </tr>
+        <tr>
+            <td>SP002</td>
+            <td>RAM DDR4 8GB</td>
+            <td contenteditable="true">25</td>
+            <td><button class="btn">Lưu</button></td>
+        </tr>
+        <tr>
+            <td>SP003</td>
+            <td>Ổ cứng SSD 256GB</td>
+            <td contenteditable="true">15</td>
+            <td><button class="btn">Lưu</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- TRANG BÁO CÁO -->
+<div id="report" class="container hidden">
+    <h2>Báo Cáo Doanh Thu</h2>
+
+    <div class="card">
+        <canvas id="revenueChart"></canvas>
+    </div>
+
+    <button class="btn" onclick="exportExcel()">Tải Excel</button>
+</div>
+
+<!-- FOOTER (THÊM Ở CUỐI TRANG) -->
+<div class="footer">
+    <h3>Phạm Minh Nhật</h3>
+    <p>Email: <b>nhatp4747@gmail.com</b></p>
+    <p>Liên hệ: <b>0967 116 716</b></p>
+    <p style="font-size: 17px; font-weight: bold; color:#0d47a1;">
+        “Quản lí kho hàng và danh sách các thiết bị linh kiện”
+    </p>
+</div>
+
+<script>
+// Chuyển trang
+function showPage(page) {
+    document.querySelectorAll(".container").forEach(div => div.classList.add("hidden"));
+    document.getElementById(page).classList.remove("hidden");
+}
+
+// Tìm kiếm sản phẩm
+function searchProduct() {
+    let keyword = document.getElementById("search").value.toLowerCase();
+    let rows = document.querySelectorAll("#productTable tbody tr");
+
+    rows.forEach(row => {
+        let name = row.children[1].innerText.toLowerCase();
+        row.style.display = name.includes(keyword) ? "" : "none";
+    });
+}
+
+// Biểu đồ doanh thu
+window.onload = () => {
+    const ctx = document.getElementById("revenueChart");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+            datasets: [{
+                label: "Doanh thu (VNĐ)",
+                data: [50, 70, 65, 90, 100],
+                borderWidth: 2,
+                borderColor: "#1a73e8"
+            }]
+        }
+    });
+};
+
+// Xuất Excel dạng CSV
+function exportExcel() {
+    const data = [
+        ["Tháng", "Doanh thu"],
+        ["Jan", 50],
+        ["Feb", 70],
+        ["Mar", 65],
+        ["Apr", 90],
+        ["May", 100]
+    ];
+
+    let csv = "";
+    data.forEach(row => { csv += row.join(",") + "\n"; });
+
+    let blob = new Blob([csv], { type: "text/csv" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "baocao_doanhthu.csv";
+    link.click();
+}
+</script>
+
+</body>
+</html>
